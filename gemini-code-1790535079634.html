@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jorge Sánchez — Editor de video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Bebas+Neue&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#121316; --panel:#1b1d21; --panel2:#202226; --line:#2c2f34;
+  --text:#EDEEF0; --muted:#9297a1;
+  --edit:#FF7A1A; --color:#FF3F8E; --color2:#21E6C1; --fair:#3ECF8E; --deliver:#2FA8FF; --fusion:#FFC93C; --about:#ffffff;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --display:'Space Grotesk',var(--sans);
+  --name:'Bebas Neue',var(--display);
+  --mono:'Space Mono',ui-monospace,monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#121316; } }
+:root[data-theme="dark"]{ --bg:#121316; }
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth; scroll-padding-top:calc(72px + env(safe-area-inset-top,0px));}
+html,body{height:100%;}
+body{margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.5; overflow-x:hidden;}
+.glow-layer{position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden;}
+.glow{position:absolute; inset:-30% -10%; opacity:0; transition:opacity 0.6s ease; filter:blur(130px);}
+.glow.on{opacity:.28;}
+.glow.g-edit{background:radial-gradient(circle at 50% 15%, var(--edit), transparent 60%);}
+.glow.g-fusion{background:radial-gradient(circle at 50% 15%, var(--fusion), transparent 60%);}
+.glow.g-color{background:radial-gradient(circle at 50% 15%, var(--color), transparent 60%);}
+.glow.g-fair{background:radial-gradient(circle at 50% 15%, var(--fair), transparent 60%);}
+.glow.g-deliver{background:radial-gradient(circle at 50% 15%, var(--deliver), transparent 60%);}
+.glow.g-about{background:radial-gradient(circle at 50% 15%, rgba(255,255,255,0.7), transparent 60%);}
+a{color:inherit;}
+.wrap{max-width:900px; margin:0 auto; padding:0 24px;}
+
+/* Nav */
+nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:50; background:rgba(18,19,22,.9); backdrop-filter:blur(8px); border-bottom:1px solid var(--line);}
+.navrow{display:flex; align-items:center; gap:4px; overflow-x:auto; padding:14px 24px; max-width:900px; margin:0 auto;}
+.navrow::-webkit-scrollbar{display:none;}
+.brand{font-family:var(--mono); font-size:13px; color:var(--muted); margin-right:auto; white-space:nowrap;}
+.tab{font-family:var(--display); font-weight:600; font-size:14px; padding:6px 12px; border-radius:6px; text-decoration:none; color:var(--muted); white-space:nowrap; border-bottom:2px solid transparent;}
+.tab:hover{color:var(--text);}
+.tab.edit{--c:var(--edit);} .tab.fusion{--c:var(--fusion);} .tab.color{--c:var(--color);} .tab.fair{--c:var(--fair);} .tab.deliver{--c:var(--deliver);}
+.tab.on{color:var(--text); border-color:var(--c);}
+
+/* Hero */
+header.hero{padding:80px 0 0; position:relative; overflow:hidden;}
+.hero-inner{position:relative; z-index:2; text-align:center; max-width:760px; margin:0 auto; padding:0 24px;}
+.timecode{font-family:var(--mono); font-size:12px; color:var(--muted); letter-spacing:.08em; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:20px;}
+.timecode .dot{width:7px; height:7px; border-radius:50%; background:#ff2d2d; animation:blink 1.6s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;} 50%{opacity:.25;}}
+
+h1{font-family:var(--name); font-weight:400; font-size:clamp(52px,13vw,128px); line-height:.86; margin:0; letter-spacing:.01em; text-transform:uppercase;}
+h1 span{position:relative; display:inline-block;}
+.tagline{font-family:var(--mono); font-size:clamp(14px,2.3vw,19px); letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin:16px 0 0;}
+
+/* Timeline strip */
+.timeline-strip{position:relative; z-index:2; margin-top:52px;}
+.tl-ruler{position:relative; height:22px; font-family:var(--mono); font-size:10px; color:var(--muted); opacity:.5;
+  background:repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 20px), repeating-linear-gradient(90deg, var(--line) 0 1.5px, transparent 1.5px 100px);
+  background-size:100% 7px, 100% 100%; background-position:bottom, bottom; background-repeat:repeat-x;
+  -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);}
+.tl-ruler span{position:absolute; top:4px;}
+.tl-baseline{height:1px; background:var(--line); opacity:.6;}
+.tl-track{position:relative; padding:0 24px; min-height:96px; display:flex; align-items:center;}
+.playhead{position:absolute; top:-22px; bottom:0; width:2px; background:#ff2d2d; z-index:3; animation:scrub 10s linear infinite; box-shadow:0 0 10px rgba(255,45,45,.7);}
+.playhead::before{content:''; position:absolute; top:-8px; left:50%; transform:translate(-50%,-50%) rotate(45deg); width:9px; height:9px; background:#ff2d2d;}
+@keyframes scrub{0%{left:4%;} 50%{left:92%;} 100%{left:4%;}}
+
+.clipstrip{display:flex; flex-wrap:wrap; gap:14px; justify-content:center; position:relative; z-index:2; width:100%; padding:22px 0 46px;}
+.clipbtn{--c:var(--edit); font-family:var(--display); font-weight:600; font-size:15px; color:#0b0c0e; background:var(--c); text-decoration:none; padding:0; border-radius:5px; position:relative; display:inline-flex; align-items:center; overflow:hidden; box-shadow:0 10px 20px -10px rgba(0,0,0,.7); transition:transform .18s ease, box-shadow .18s ease;}
+.clipbtn span{padding:14px 22px; position:relative; z-index:2;}
+.clipbtn::before{content:''; position:absolute; top:0; left:0; right:0; height:3px; background:rgba(255,255,255,.45); z-index:2;}
+.clipbtn:hover{transform:translateY(-4px) scale(1.04); box-shadow:0 16px 30px -10px rgba(0,0,0,.8), 0 0 22px -2px var(--c);}
+.clipbtn.c-fusion{--c:var(--fusion);} .clipbtn.c-color{--c:var(--color);} .clipbtn.c-fair{--c:var(--fair);} .clipbtn.c-deliver{--c:var(--deliver);}
+.clipbtn.c-contact{--c:var(--panel2); color:var(--text); border:1px solid var(--line);}
+.clipbtn.c-contact::before{background:var(--line);}
+
+/* Secciones */
+#sectionsWrap{display:flex; flex-direction:column;}
+
+.page {
+  padding: 48px 32px 56px 32px;
+  margin: 24px 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background .4s ease, transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  box-shadow: 0 14px 35px -12px rgba(0,0,0,.7);
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--c);
+  opacity: .5;
+  transition: opacity .3s ease, height .3s ease;
+  z-index: 1;
+}
+
+.page::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 24px; right: 24px;
+  height: 5px;
+  background: var(--c);
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 -3px 12px var(--c);
+  opacity: 0.85;
+  transition: opacity .3s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.page .bottom-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--c);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.page:not(.expanded):hover .bottom-hint {
+  opacity: 1;
+  animation: pulseHint 1.8s ease-in-out infinite;
+}
+
+@keyframes pulseHint {
+  0%, 100% { opacity: 0.8; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(3px); }
+}
+
+.page.expanded .bottom-hint {display: none;}
+
+.page.expanded {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 12%, var(--panel)), var(--panel) 380px);
+  border-color: color-mix(in srgb, var(--c) 40%, var(--line));
+  box-shadow: 0 20px 45px -15px rgba(0,0,0,.8), 0 0 25px -5px color-mix(in srgb, var(--c) 40%, transparent);
+}
+
+.page.expanded::before {opacity: 1; height: 4px;}
+.page:hover:not(.expanded) {transform: translateY(-4px); box-shadow: 0 18px 38px -14px rgba(0,0,0,.8), 0 0 15px -4px color-mix(in srgb, var(--c) 30%, transparent); border-color: color-mix(in srgb, var(--c) 40%, var(--line));}
+
+.page-head{display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin-bottom:8px; position:relative; z-index:2;}
+.page-title-area { display:flex; align-items:baseline; gap:14px; }
+.page-tag{font-family:var(--mono); font-size:12px; color:var(--c); border:1px solid var(--c); border-radius:4px; padding:2px 8px;}
+.page h2{font-family:var(--display); font-size:28px; margin:0;}
+.page p.desc{color:var(--muted); max-width:60ch; margin:12px 0 28px; position:relative; z-index:2;}
+
+#edit{--c:var(--edit);} #fusion{--c:var(--fusion);} #color{--c:var(--color);} #fairlight{--c:var(--fair);} #deliver{--c:var(--deliver);} #sobremi{--c:var(--about);}
+
+/* Grillas e imágenes de miniaturas */
+.clips{display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px; position:relative; z-index:2;}
+
+.clips-extra {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height .4s cubic-bezier(0.4, 0, 0.2, 1), opacity .3s ease, margin-top .3s ease;
+  margin-top: 0;
+}
+
+.page.expanded .clips-extra {
+  max-height: 1200px;
+  opacity: 1;
+  margin-top: 16px;
+}
+
+.clip {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color .2s ease;
+}
+.clip:hover{border-color: color-mix(in srgb, var(--c) 50%, var(--line));}
+.clip .num{font-family:var(--mono); font-size:12px; color:var(--c); margin-bottom:8px;}
+
+.thumb-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 4px;
+    background: #000;
+    margin-top: 6px;
+}
+
+.thumb-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .3s ease;
+}
+
+.clip:hover .thumb-container img {
+    transform: scale(1.03);
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    border-radius: 6px;
+    background: #000;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: 0;
+}
+
+/* Sobre mí */
+.about-grid{display:flex; gap:32px; align-items:center; flex-wrap:wrap; position:relative; z-index:2;}
+.about-text{flex:1; min-width:280px;}
+.about-text p{color:var(--muted); font-size:15px; line-height:1.6; margin:0;}
+.about-text p strong{color:var(--text); font-weight:600;}
+
+.about-extra{
+  max-height: 65px;
+  opacity: 0.6;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+  transition: max-height .45s ease, opacity .35s ease;
+  -webkit-mask-image: linear-gradient(180deg, #000 35%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 35%, transparent 100%);
+  margin-top: 12px;
+}
+
+#sobremi.expanded .about-extra{
+  max-height: 300px;
+  opacity: 1;
+  overflow-y: auto;
+  -webkit-mask-image: none;
+  mask-image: none;
+  margin-top: 16px;
+  padding-right: 6px;
+}
+
+#sobremi.expanded .about-extra::-webkit-scrollbar { width: 5px; }
+#sobremi.expanded .about-extra::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
+#sobremi.expanded .about-extra::-webkit-scrollbar-thumb { background: var(--c); box-shadow: 0 0 10px var(--c); }
+
+/* Footer */
+footer{padding:56px 0 calc(56px + env(safe-area-inset-bottom,0px));}
+footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
+.contact-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px;}
+.contact-item{border:1px solid var(--line); border-radius:8px; padding:16px; background:var(--panel);}
+.contact-item .label{font-family:var(--mono); font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+.contact-item .val{margin-top:6px; font-family:var(--display); font-weight:600; font-size:15px; word-break:break-word;}
+.contact-item a{text-decoration:none; border-bottom:1px solid var(--line);}
+.foot-note{margin-top:32px; color:var(--muted); font-size:13px; font-family:var(--mono);}
+
+@media (max-width:560px){
+  header.hero{padding:64px 0 72px;}
+  .page{padding:36px 20px;}
+  .about-grid{flex-direction: column; text-align: center;}
+}
+</style>
+</head>
+<body>
+
+<div class="glow-layer" aria-hidden="true">
+  <div class="glow g-edit"></div>
+  <div class="glow g-fusion"></div>
+  <div class="glow g-color"></div>
+  <div class="glow g-fair"></div>
+  <div class="glow g-deliver"></div>
+  <div class="glow g-about"></div>
+</div>
+
+<nav>
+  <div class="navrow">
+    <span class="brand">JS · portfolio</span>
+    <a class="tab edit" href="#edit" data-glow="edit" data-section="edit">Edit</a>
+    <a class="tab fusion" href="#fusion" data-glow="fusion" data-section="fusion">Miniaturas</a>
+    <a class="tab color" href="#color" data-glow="color" data-section="color">Color</a>
+    <a class="tab fair" href="#fairlight" data-glow="fair" data-section="fairlight">Podcast</a>
+    <a class="tab deliver" href="#deliver" data-glow="deliver" data-section="deliver">YouTube</a>
+    <a class="tab" href="#contacto">Contacto</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="timecode"><span class="dot"></span>00:00:00:00 — REC</div>
+      <h1><span>Jorge Sánchez</span></h1>
+      <p class="tagline">Editor de video</p>
+    </div>
+
+    <div class="timeline-strip">
+      <div class="tl-ruler">
+        <span style="left:4%">01:00:00:00</span>
+        <span style="left:22%">01:00:08:00</span>
+        <span style="left:40%">01:00:16:00</span>
+        <span style="left:58%">01:00:24:00</span>
+        <span style="left:76%">01:00:32:00</span>
+        <span style="left:92%">01:00:40:00</span>
+      </div>
+      <div class="tl-baseline"></div>
+      <div class="tl-track">
+        <div class="playhead"></div>
+        <div class="clipstrip">
+          <a class="clipbtn" href="#edit" data-glow="edit" data-section="edit"><span>Reels</span></a>
+          <a class="clipbtn c-fusion" href="#fusion" data-glow="fusion" data-section="fusion"><span>Miniaturas</span></a>
+          <a class="clipbtn c-color" href="#color" data-glow="color" data-section="color"><span>Color</span></a>
+          <a class="clipbtn c-fair" href="#fairlight" data-glow="fair" data-section="fairlight"><span>Podcast</span></a>
+          <a class="clipbtn c-deliver" href="#deliver" data-glow="deliver" data-section="deliver"><span>YouTube</span></a>
+          <a class="clipbtn c-contact" href="#contacto"><span>Contacto</span></a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="sectionsWrap">
+  <section class="page" id="edit">
+    <div class="bottom-hint">ver más ▾</div>
+    <div class="page-head">
+      <div class="page-title-area"><span class="page-tag">Edit</span><h2>Reels y contenido vertical</h2></div>
+    </div>
+    <p class="desc">Edición para Instagram, TikTok y Reels: ritmo rápido, cortes con intención y ganchos pensados para retener desde el primer segundo.</p>
+    
+    <div class="clips">
+      <div class="clip">
+        <div class="num">Clip 01</div>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/xHPL-PKVTRc?rel=0" title="YouTube Shorts - Reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+      <div class="clip">
+        <div class="num">Clip 02</div>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/-FphNx9YwDw?rel=0" title="YouTube Shorts - Reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+      <div class="clip">
+        <div class="num">Clip 03</div>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/WT8E232NcpA?rel=0" title="YouTube Shorts - Reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="clips-extra">
+      <div class="clips" style="padding-top: 16px;">
+        <div class="clip">
+          <div class="num">Clip 04</div>
+          <div class="video-container">
+              <iframe src="https://www.youtube.com/embed/WxSb3z5eLcc?rel=0" title="YouTube Shorts - Reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="clip">
+          <div class="num">Clip 05</div>
+          <div class="video-container">
+              <iframe src="https://www.youtube.com/embed/qHSvPspj6nw?rel=0" title="YouTube Shorts - Reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </div>
+        <div class="clip">
+          <div class="num">Clip 06</div>
+          <div class="video-container">
+              <iframe src="https://www.youtube.com/embed/DfGPSDcxy6k?rel=0" title="YouTube Shorts - Reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="fusion">
+    <div class="bottom-hint">ver más ▾</div>
+    <div class="page-head">
+      <div class="page-title-area"><span class="page-tag">Fusion</span><h2>Miniaturas y diseño gráfico</h2></div>
+    </div>
+    <p class="desc">Diseño de miniaturas para YouTube y carruseles para Instagram: piezas gráficas pensadas para que el contenido se destaque y comunique de un vistazo.</p>
+    
+    <!-- Grilla principal: Primeras 3 miniaturas -->
+    <div class="clips">
+      <div class="clip">
+        <div class="num">Thumb 01</div>
+        <div class="thumb-container"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=" alt="La Casa del Helado" style="display:none;" onload="this.style.display='block'"></div>
+        <div style="font-size:13px; font-weight:600; margin-top:8px;">La Casa del Helado</div>
+      </div>
+      <div class="clip">
+        <div class="num">Thumb 02</div>
+        <div class="thumb-container"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Don Gato" style="display:none;" onload="this.style.display='block'"></div>
+        <div style="font-size:13px; font-weight:600; margin-top:8px;">Don Gato</div>
+      </div>
+      <div class="clip">
+        <div class="num">Thumb 03</div>
+        <div class="thumb-container"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="La Historia del Mundial" style="display:none;" onload="this.style.display='block'"></div>
+        <div style="font-size:13px; font-weight:600; margin-top:8px;">La Historia del Mundial</div>
+      </div>
+    </div>
+
+    <!-- Bandeja extra: Resto de las miniaturas cargadas -->
+    <div class="clips-extra">
+      <div class="clips" style="padding-top: 16px;">
+        <div class="clip">
+          <div class="num">Thumb 04</div>
+          <div class="thumb-container"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=" alt="La Nostalgia Digital"></div>
+          <div style="font-size:13px; font-weight:600; margin-top:8px;">La Nostalgia Digital</div>
+        </div>
+        <div class="clip">
+          <div class="num">Thumb 05</div>
+          <div class="thumb-container"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=" alt="Nos vamos a la final del mundial"></div>
+          <div style="font-size:13px; font-weight:600; margin-top:8px;">Nos vamos a la final del mundial</div>
+        </div>
+        <div class="clip">
+          <div class="num">Thumb 06</div>
+          <div class="thumb-container"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=" alt="¿Qué son las paradojas?"></div>
+          <div style="font-size:13px; font-weight:600; margin-top:8px;">¿Qué son las paradojas?</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="color">
+    <div class="bottom-hint">ver más ▾</div>
+    <div class="page-head">
+      <div class="page-title-area"><span class="page-tag">Color</span><h2>Color grading</h2></div>
+    </div>
+    <p class="desc">Corrección de color y grading: unificar la imagen entre cámaras, ajustar el tono de piel y darle una identidad visual consistente al proyecto.</p>
+    <div class="clips">
+      <div class="clip"><div class="num">Grade 01</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      <div class="clip"><div class="num">Grade 02</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      <div class="clip"><div class="num">Grade 03</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+    </div>
+    <div class="clips-extra">
+      <div class="clips" style="padding-top: 16px;">
+        <div class="clip"><div class="num">Grade 04</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+        <div class="clip"><div class="num">Grade 05</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+        <div class="clip"><div class="num">Grade 06</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="fairlight">
+    <div class="bottom-hint">ver más ▾</div>
+    <div class="page-head">
+      <div class="page-title-area"><span class="page-tag">Fairlight</span><h2>Podcast — Separados al Nacer</h2></div>
+    </div>
+    <p class="desc">Producción y postproducción integral del podcast: edición de audio y video, diseño de las miniaturas del canal, y los reels de cada episodio para redes.</p>
+    <div class="clips">
+      <div class="clip"><div class="num">Ep. 01</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      <div class="clip"><div class="num">Ep. 02</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      <div class="clip"><div class="num">Ep. 03</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+    </div>
+    <div class="clips-extra">
+      <div class="clips" style="padding-top: 16px;">
+        <div class="clip"><div class="num">Ep. 04</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+        <div class="clip"><div class="num">Ep. 05</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+        <div class="clip"><div class="num">Ep. 06</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="deliver">
+    <div class="bottom-hint">ver más ▾</div>
+    <div class="page-head">
+      <div class="page-title-area"><span class="page-tag">Deliver</span><h2>YouTube — videos largos</h2></div>
+    </div>
+    <p class="desc">Edición de formato largo para YouTube: estructura, ritmo narrativo y entrega final lista para publicar.</p>
+    <div class="clips">
+      <div class="clip"><div class="num">Video 01</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      <div class="clip"><div class="num">Video 02</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      <div class="clip"><div class="num">Video 03</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+    </div>
+    <div class="clips-extra">
+      <div class="clips" style="padding-top: 16px;">
+        <div class="clip"><div class="num">Video 04</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+        <div class="clip"><div class="num">Video 05</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+        <div class="clip"><div class="num">Video 06</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="sobremi">
+    <div class="bottom-hint">ver más ▾</div>
+    <div class="page-head">
+      <div class="page-title-area"><h2>Sobre mí</h2></div>
+    </div>
+    <div class="about-grid" style="margin-top:16px;">
+      <div class="about-text">
+        <p>Soy videógrafo y editor de video con <strong>3 años de experiencia</strong>. No solo me encargo de la postproducción, sino también de la grabación de contenido con calidad profesional.</p>
+      </div>
+    </div>
+    <div class="about-extra">
+      <p style="color: var(--muted); margin: 0; font-size: 15px; line-height: 1.6;">
+        A lo largo de mi recorrido he trabajado en podcasts —incluyendo mi propio proyecto—, videos de formato largo para YouTube, entrevistas y vlogs, además de colaborar en el rubro gastronómico para marcas como Ribs al Río y Martín Faraón.<br><br>
+        Me apasiona lo que hago, cuido cada detalle al máximo y me enfoco en entender la visión y necesidad de mis clientes para plasmarla con precisión en cada proyecto.
+      </p>
+    </div>
+  </section>
+  </div>
+
+</div>
+
+<footer id="contacto">
+  <div class="wrap">
+    <h2>Contacto</h2>
+    <div class="contact-grid">
+      <div class="contact-item"><div class="label">Email</div><div class="val"><a href="mailto:jorgedavidchez@gmail.com">jorgedavidchez@gmail.com</a></div></div>
+      <div class="contact-item"><div class="label">WhatsApp</div><div class="val"><a href="https://wa.me/541136418918">11 3641-8918</a></div></div>
+      <div class="contact-item"><div class="label">LinkedIn</div><div class="val"><a href="https://www.linkedin.com/in/jorge-sanchez-videoeditor/" target="_blank" rel="noopener">jorge-sanchez-videoeditor</a></div></div>
+      <div class="contact-item"><div class="label">Ubicación</div><div class="val">Buenos Aires, Argentina</div></div>
+    </div>
+    <div class="foot-note">© 2026 Jorge Sánchez</div>
+  </div>
+</footer>
+
+<script>
+const tabs = document.querySelectorAll('nav .tab[href^="#"]');
+const pages = document.querySelectorAll('.page');
+const glows = document.querySelectorAll('.glow');
+const sectionsWrap = document.getElementById('sectionsWrap');
+
+function setGlow(glowName) {
+  glows.forEach(g => {
+    g.classList.toggle('on', glowName ? g.classList.contains('g-' + glowName) : false);
+  });
+}
+
+pages.forEach(page => {
+  page.addEventListener('click', (e) => {
+    if (e.target.closest('a, iframe, .clips, .clips-extra, .about-grid, .about-extra')) return;
+
+    const wasExpanded = page.classList.contains('expanded');
+
+    pages.forEach(p => p.classList.remove('expanded'));
+
+    if (!wasExpanded) {
+      page.classList.add('expanded');
+      const sectionId = page.getAttribute('id');
+      if (sectionId === 'sobremi') {
+        setGlow('about');
+      } else if (sectionId === 'fairlight') {
+        setGlow('fair');
+      } else {
+        setGlow(sectionId);
+      }
+    } else {
+      setGlow(null);
+    }
+  });
+});
+
+document.querySelectorAll('[data-section]').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const targetId = btn.dataset.section;
+    const targetPage = document.getElementById(targetId);
+    
+    if (targetPage) {
+      pages.forEach(p => p.classList.remove('expanded'));
+      targetPage.classList.add('expanded');
+      sectionsWrap.prepend(targetPage);
+      
+      if (targetId === 'sobremi') {
+        setGlow('about');
+      } else if (targetId === 'fairlight') {
+        setGlow('fair');
+      } else {
+        setGlow(targetId);
+      }
+    }
+  });
+});
+
+tabs.forEach(tab => {
+  const glowType = tab.dataset.glow;
+  if (!glowType) return;
+
+  tab.addEventListener('mouseenter', () => setGlow(glowType));
+  tab.addEventListener('mouseleave', () => {
+    const activePage = document.querySelector('.page.expanded');
+    if (activePage) {
+      const activeId = activePage.getAttribute('id');
+      if (activeId === 'sobremi') {
+        setGlow('about');
+      } else if (activeId === 'fairlight') {
+        setGlow('fair');
+      } else {
+        setGlow(activeId);
+      }
+    } else {
+      setGlow(null);
+    }
+  });
+});
+</script>
+</body>
+</html>
