@@ -159,6 +159,14 @@ h1 span{position:relative; display:inline-block;}
 .page.expanded::before {opacity: 1; height: 4px;}
 .page:hover:not(.expanded) {transform: translateY(-4px); box-shadow: 0 18px 38px -14px rgba(0,0,0,.8), 0 0 15px -4px color-mix(in srgb, var(--c) 30%, transparent); border-color: color-mix(in srgb, var(--c) 40%, var(--line));}
 
+.page:not(.expanded):hover .clips {
+  animation: peekScroll 1.8s ease-in-out infinite;
+}
+@keyframes peekScroll {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
 .page-head{display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin-bottom:8px; position:relative; z-index:2;}
 .page-title-area { display:flex; align-items:baseline; gap:14px; }
 .page-tag{font-family:var(--mono); font-size:12px; color:var(--c); border:1px solid var(--c); border-radius:4px; padding:2px 8px;}
@@ -167,7 +175,6 @@ h1 span{position:relative; display:inline-block;}
 
 #edit{--c:var(--edit);} #fusion{--c:var(--fusion);} #color{--c:var(--color);} #fairlight{--c:var(--fair);} #deliver{--c:var(--deliver);} #sobremi{--c:var(--about);}
 
-/* Grillas e imágenes de miniaturas */
 .clips{display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px; position:relative; z-index:2;}
 
 .clips-extra {
@@ -179,7 +186,7 @@ h1 span{position:relative; display:inline-block;}
 }
 
 .page.expanded .clips-extra {
-  max-height: 1200px;
+  max-height: 600px;
   opacity: 1;
   margin-top: 16px;
 }
@@ -196,28 +203,9 @@ h1 span{position:relative; display:inline-block;}
 }
 .clip:hover{border-color: color-mix(in srgb, var(--c) 50%, var(--line));}
 .clip .num{font-family:var(--mono); font-size:12px; color:var(--c); margin-bottom:8px;}
-
-.thumb-container {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    border-radius: 4px;
-    background: #000;
-    margin-top: 6px;
-}
-
-.thumb-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform .3s ease;
-}
-
-.clip:hover .thumb-container img {
-    transform: scale(1.03);
-}
+.clip .ph{color:var(--muted); font-size:14px; margin-top:8px;}
+.clip a.slot{margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;}
+.clip img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 4px; margin-top: 12px; border: 1px solid var(--line); }
 
 .video-container {
     position: relative;
@@ -235,7 +223,6 @@ h1 span{position:relative; display:inline-block;}
     border: 0;
 }
 
-/* Sobre mí */
 .about-grid{display:flex; gap:32px; align-items:center; flex-wrap:wrap; position:relative; z-index:2;}
 .about-text{flex:1; min-width:280px;}
 .about-text p{color:var(--muted); font-size:15px; line-height:1.6; margin:0;}
@@ -267,7 +254,6 @@ h1 span{position:relative; display:inline-block;}
 #sobremi.expanded .about-extra::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
 #sobremi.expanded .about-extra::-webkit-scrollbar-thumb { background: var(--c); box-shadow: 0 0 10px var(--c); }
 
-/* Footer */
 footer{padding:56px 0 calc(56px + env(safe-area-inset-bottom,0px));}
 footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
 .contact-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px;}
@@ -393,50 +379,23 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
     </div>
   </section>
 
+  <!-- SECCIÓN FUSION CON RUTAS A LA CARPETA 'imagenes' DE GITHUB -->
   <section class="page" id="fusion">
     <div class="bottom-hint">ver más ▾</div>
     <div class="page-head">
       <div class="page-title-area"><span class="page-tag">Fusion</span><h2>Miniaturas y diseño gráfico</h2></div>
     </div>
     <p class="desc">Diseño de miniaturas para YouTube y carruseles para Instagram: piezas gráficas pensadas para que el contenido se destaque y comunique de un vistazo.</p>
-    
-    <!-- Grilla principal: Primeras 3 miniaturas -->
     <div class="clips">
-      <div class="clip">
-        <div class="num">Thumb 01</div>
-        <div class="thumb-container"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=" alt="La Casa del Helado" style="display:none;" onload="this.style.display='block'"></div>
-        <div style="font-size:13px; font-weight:600; margin-top:8px;">La Casa del Helado</div>
-      </div>
-      <div class="clip">
-        <div class="num">Thumb 02</div>
-        <div class="thumb-container"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Don Gato" style="display:none;" onload="this.style.display='block'"></div>
-        <div style="font-size:13px; font-weight:600; margin-top:8px;">Don Gato</div>
-      </div>
-      <div class="clip">
-        <div class="num">Thumb 03</div>
-        <div class="thumb-container"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="La Historia del Mundial" style="display:none;" onload="this.style.display='block'"></div>
-        <div style="font-size:13px; font-weight:600; margin-top:8px;">La Historia del Mundial</div>
-      </div>
+      <div class="clip"><div class="num">La Casa del Helado</div><img src="imagenes/12.jpg" alt="La Casa del Helado"></div>
+      <div class="clip"><div class="num">Don Gato</div><img src="imagenes/14.png" alt="Entrevista Don Gato"></div>
+      <div class="clip"><div class="num">Podcast EP.1</div><img src="imagenes/17.png" alt="Separados al Nacer EP.1"></div>
     </div>
-
-    <!-- Bandeja extra: Resto de las miniaturas cargadas -->
     <div class="clips-extra">
       <div class="clips" style="padding-top: 16px;">
-        <div class="clip">
-          <div class="num">Thumb 04</div>
-          <div class="thumb-container"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=" alt="La Nostalgia Digital"></div>
-          <div style="font-size:13px; font-weight:600; margin-top:8px;">La Nostalgia Digital</div>
-        </div>
-        <div class="clip">
-          <div class="num">Thumb 05</div>
-          <div class="thumb-container"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=" alt="Nos vamos a la final del mundial"></div>
-          <div style="font-size:13px; font-weight:600; margin-top:8px;">Nos vamos a la final del mundial</div>
-        </div>
-        <div class="clip">
-          <div class="num">Thumb 06</div>
-          <div class="thumb-container"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=" alt="¿Qué son las paradojas?"></div>
-          <div style="font-size:13px; font-weight:600; margin-top:8px;">¿Qué son las paradojas?</div>
-        </div>
+        <div class="clip"><div class="num">Podcast EP.3</div><img src="imagenes/20.jpg" alt="Separados al Nacer EP.3"></div>
+        <div class="clip"><div class="num">Podcast EP.6</div><img src="imagenes/24.jpg" alt="Separados al Nacer EP.6"></div>
+        <div class="clip"><div class="num">Podcast EP.7</div><img src="imagenes/27.jpg" alt="Separados al Nacer EP.7"></div>
       </div>
     </div>
   </section>
@@ -448,15 +407,15 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
     </div>
     <p class="desc">Corrección de color y grading: unificar la imagen entre cámaras, ajustar el tono de piel y darle una identidad visual consistente al proyecto.</p>
     <div class="clips">
-      <div class="clip"><div class="num">Grade 01</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-      <div class="clip"><div class="num">Grade 02</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-      <div class="clip"><div class="num">Grade 03</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      <div class="clip"><div class="num">Grade 01</div><div class="ph">Ejemplo de color.</div><a class="slot" href="#">+ agregar link</a></div>
+      <div class="clip"><div class="num">Grade 02</div><div class="ph">Ejemplo de color.</div><a class="slot" href="#">+ agregar link</a></div>
+      <div class="clip"><div class="num">Grade 03</div><div class="ph">Ejemplo de color.</div><a class="slot" href="#">+ agregar link</a></div>
     </div>
     <div class="clips-extra">
       <div class="clips" style="padding-top: 16px;">
-        <div class="clip"><div class="num">Grade 04</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-        <div class="clip"><div class="num">Grade 05</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-        <div class="clip"><div class="num">Grade 06</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Ejemplo de color.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+        <div class="clip"><div class="num">Grade 04</div><div class="ph">Ejemplo de color.</div><a class="slot" href="#">+ agregar link</a></div>
+        <div class="clip"><div class="num">Grade 05</div><div class="ph">Ejemplo de color.</div><a class="slot" href="#">+ agregar link</a></div>
+        <div class="clip"><div class="num">Grade 06</div><div class="ph">Ejemplo de color.</div><a class="slot" href="#">+ agregar link</a></div>
       </div>
     </div>
   </section>
@@ -468,15 +427,15 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
     </div>
     <p class="desc">Producción y postproducción integral del podcast: edición de audio y video, diseño de las miniaturas del canal, y los reels de cada episodio para redes.</p>
     <div class="clips">
-      <div class="clip"><div class="num">Ep. 01</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-      <div class="clip"><div class="num">Ep. 02</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-      <div class="clip"><div class="num">Ep. 03</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      <div class="clip"><div class="num">Ep. 01</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+      <div class="clip"><div class="num">Ep. 02</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+      <div class="clip"><div class="num">Ep. 03</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
     </div>
     <div class="clips-extra">
       <div class="clips" style="padding-top: 16px;">
-        <div class="clip"><div class="num">Ep. 04</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-        <div class="clip"><div class="num">Ep. 05</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-        <div class="clip"><div class="num">Ep. 06</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Episodio destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+        <div class="clip"><div class="num">Ep. 04</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+        <div class="clip"><div class="num">Ep. 05</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+        <div class="clip"><div class="num">Ep. 06</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
       </div>
     </div>
   </section>
@@ -488,15 +447,15 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
     </div>
     <p class="desc">Edición de formato largo para YouTube: estructura, ritmo narrativo y entrega final lista para publicar.</p>
     <div class="clips">
-      <div class="clip"><div class="num">Video 01</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-      <div class="clip"><div class="num">Video 02</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-      <div class="clip"><div class="num">Video 03</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+      <div class="clip"><div class="num">Video 01</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+      <div class="clip"><div class="num">Video 02</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+      <div class="clip"><div class="num">Video 03</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
     </div>
     <div class="clips-extra">
       <div class="clips" style="padding-top: 16px;">
-        <div class="clip"><div class="num">Video 04</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-        <div class="clip"><div class="num">Video 05</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
-        <div class="clip"><div class="num">Video 06</div><div class="ph" style="color:var(--muted); font-size:14px; margin-top:8px;">Video largo destacado.</div><a class="slot" href="#" style="margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;">+ agregar link</a></div>
+        <div class="clip"><div class="num">Video 04</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+        <div class="clip"><div class="num">Video 05</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+        <div class="clip"><div class="num">Video 06</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
       </div>
     </div>
   </section>
