@@ -186,7 +186,7 @@ h1 span{position:relative; display:inline-block;}
 }
 
 .page.expanded .clips-extra {
-  max-height: 600px;
+  max-height: 650px;
   opacity: 1;
   margin-top: 16px;
 }
@@ -205,7 +205,8 @@ h1 span{position:relative; display:inline-block;}
 .clip .num{font-family:var(--mono); font-size:12px; color:var(--c); margin-bottom:8px;}
 .clip .ph{color:var(--muted); font-size:14px; margin-top:8px;}
 .clip a.slot{margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;}
-.clip img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 4px; margin-top: 12px; border: 1px solid var(--line); }
+.clip img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 4px; margin-top: 12px; border: 1px solid var(--line); cursor: pointer; transition: transform 0.2s ease, filter 0.2s ease; }
+.clip img:hover { transform: scale(1.02); filter: brightness(1.1); }
 
 .video-container {
     position: relative;
@@ -221,6 +222,292 @@ h1 span{position:relative; display:inline-block;}
     top: 0; left: 0;
     width: 100%; height: 100%;
     border: 0;
+}
+
+/* Slider y Paginado en Sección Fusion */
+.fusion-slider-wrapper {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+.fusion-slider-track {
+  display: flex;
+  width: 200%;
+  align-items: flex-start;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fusion-slide {
+  width: 50%;
+  flex-shrink: 0;
+  padding-right: 2px;
+  transition: opacity 0.3s ease;
+}
+
+/* Colapso de la diapositiva inactiva para evitar espacio muerto */
+.fusion-slide:not(.active-slide):not(.is-sliding) {
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fusion-slide.active-slide {
+  height: auto;
+  overflow: visible;
+  opacity: 1;
+}
+
+/* Carrusel Estilo Instagram para la Ventana 2 */
+.insta-carousel {
+  position: relative;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.insta-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: #000;
+}
+
+.insta-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.insta-track img {
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  object-fit: cover;
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+  margin-top: 0;
+  transition: filter 0.2s ease;
+}
+
+.insta-track img:hover {
+  transform: none;
+  filter: brightness(1.05);
+}
+
+.insta-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(18, 19, 22, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 6;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: background 0.2s ease, opacity 0.25s ease, transform 0.2s ease, border-color 0.2s ease;
+  padding: 0;
+  outline: none;
+}
+
+.insta-arrow svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--text);
+}
+
+.insta-arrow.prev { left: 8px; }
+.insta-arrow.next { right: 8px; }
+
+.insta-arrow:hover {
+  background: rgba(18, 19, 22, 0.9);
+  border-color: var(--fusion);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.insta-arrow:hover svg {
+  stroke: var(--fusion);
+}
+
+.insta-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  background: rgba(18, 19, 22, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+.insta-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 2px 0;
+}
+
+.insta-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  opacity: 0.35;
+  cursor: pointer;
+  transition: background 0.25s ease, opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.insta-dot.active {
+  background: var(--fusion);
+  opacity: 1;
+  transform: scale(1.3);
+  box-shadow: 0 0 8px var(--fusion);
+}
+
+/* Controles de Paginación: Puntos al centro */
+.fusion-pagination-controls {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line);
+  position: relative;
+  z-index: 3;
+}
+#fusion.expanded .fusion-pagination-controls {
+  display: flex;
+}
+
+.fusion-dots {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dot-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  opacity: 0.35;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+.dot-indicator.active {
+  background: var(--fusion);
+  opacity: 1;
+  box-shadow: 0 0 10px var(--fusion), 0 0 18px color-mix(in srgb, var(--fusion) 60%, transparent);
+  transform: scale(1.3);
+}
+
+/* Flechas Laterales Vectoriales Ultradelgadas */
+.side-arrow-btn {
+  display: none;
+  position: absolute;
+  bottom: 18px;
+  background: transparent;
+  border: none;
+  color: var(--fusion);
+  cursor: pointer;
+  z-index: 10;
+  padding: 6px;
+  line-height: 1;
+  outline: none;
+  transition: transform 0.25s ease, filter 0.3s ease, opacity 0.3s ease;
+  animation: suttlePulseSide 2s infinite ease-in-out;
+}
+
+.side-arrow-btn svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+  stroke: var(--fusion);
+  stroke-width: 1.25;
+}
+
+#fusion.expanded .side-arrow-btn.visible {
+  display: block;
+}
+
+.side-arrow-btn.next { right: 24px; }
+.side-arrow-btn.prev { left: 24px; }
+
+@keyframes suttlePulseSide {
+  0%, 100% {
+    opacity: 0.45;
+    filter: drop-shadow(0 0 2px color-mix(in srgb, var(--fusion) 40%, transparent));
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px var(--fusion));
+    transform: scale(1.12);
+  }
+}
+
+.side-arrow-btn:hover {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 14px var(--fusion)) !important;
+  transform: scale(1.25) !important;
+}
+
+/* Modal Ventana Emergente para Miniaturas */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 24px;
+}
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-container {
+  max-width: 92vw;
+  max-height: 88vh;
+  position: relative;
+  transform: scale(0.92);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-overlay.active .modal-container {
+  transform: scale(1);
+}
+.modal-img {
+  max-width: 100%;
+  max-height: 88vh;
+  border-radius: 8px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+  border: 1px solid var(--line);
+  object-fit: contain;
+  display: block;
 }
 
 .about-grid{display:flex; gap:32px; align-items:center; flex-wrap:wrap; position:relative; z-index:2;}
@@ -379,24 +666,107 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
     </div>
   </section>
 
+  <!-- SECCIÓN FUSION -->
   <section class="page" id="fusion">
     <div class="bottom-hint">ver más ▾</div>
     <div class="page-head">
       <div class="page-title-area"><span class="page-tag">Fusion</span><h2>Miniaturas y diseño gráfico</h2></div>
     </div>
     <p class="desc">Diseño de miniaturas para YouTube y carruseles para Instagram: piezas gráficas pensadas para que el contenido se destaque y comunique de un vistazo.</p>
-    <div class="clips">
-      <div class="clip"><div class="num">La Casa del Helado</div><img src="imagenes/12.png" alt="La Casa del Helado"></div>
-      <div class="clip"><div class="num">Don Gato</div><img src="imagenes/14.png" alt="Entrevista Don Gato"></div>
-      <div class="clip"><div class="num">Podcast EP.1</div><img src="imagenes/17.png" alt="Separados al Nacer EP.1"></div>
-    </div>
-    <div class="clips-extra">
-      <div class="clips" style="padding-top: 16px;">
-        <div class="clip"><div class="num">Podcast EP.3</div><img src="imagenes/20.png" alt="Separados al Nacer EP.3"></div>
-        <div class="clip"><div class="num">Podcast EP.6</div><img src="imagenes/24.png" alt="Separados al Nacer EP.6"></div>
-        <div class="clip"><div class="num">Podcast EP.7</div><img src="imagenes/27.png" alt="Separados al Nacer EP.7"></div>
+    
+    <div class="fusion-slider-wrapper">
+      <div class="fusion-slider-track" id="fusionTrack">
+        
+        <!-- PÁGINA 1 DE MINIATURAS (16:9) -->
+        <div class="fusion-slide active-slide">
+          <div class="clips">
+            <div class="clip"><div class="num">La Casa del Helado</div><img src="imagenes/12.png" alt="La Casa del Helado"></div>
+            <div class="clip"><div class="num">Don Gato</div><img src="imagenes/14.png" alt="Entrevista Don Gato"></div>
+            <div class="clip"><div class="num">Podcast EP.1</div><img src="imagenes/17.png" alt="Separados al Nacer EP.1"></div>
+          </div>
+          <div class="clips-extra">
+            <div class="clips" style="padding-top: 16px;">
+              <div class="clip"><div class="num">Podcast EP.3</div><img src="imagenes/20.png" alt="Separados al Nacer EP.3"></div>
+              <div class="clip"><div class="num">Podcast EP.6</div><img src="imagenes/24.png" alt="Separados al Nacer EP.6"></div>
+              <div class="clip"><div class="num">Podcast EP.7</div><img src="imagenes/27.png" alt="Separados al Nacer EP.7"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PÁGINA 2 DE CARRUSELES ESTILO INSTAGRAM (.png) -->
+        <div class="fusion-slide">
+          <div class="clips">
+            
+            <!-- Carrusel Don Gato -->
+            <div class="clip">
+              <div class="num">Carrusel — Don Gato</div>
+              <div class="insta-carousel">
+                <div class="insta-viewport">
+                  <div class="insta-track">
+                    <img src="imagenes/1.png" alt="Don Gato Slide 1">
+                    <img src="imagenes/2.png" alt="Don Gato Slide 2">
+                    <img src="imagenes/3.png" alt="Don Gato Slide 3">
+                    <img src="imagenes/4.png" alt="Don Gato Slide 4">
+                    <img src="imagenes/5.png" alt="Don Gato Slide 5">
+                    <img src="imagenes/6.png" alt="Don Gato Slide 6">
+                    <img src="imagenes/7.png" alt="Don Gato Slide 7">
+                    <img src="imagenes/8.png" alt="Don Gato Slide 8">
+                    <img src="imagenes/9.png" alt="Don Gato Slide 9">
+                  </div>
+                  <button class="insta-arrow prev" type="button" aria-label="Anterior">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  </button>
+                  <button class="insta-arrow next" type="button" aria-label="Siguiente">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
+                  <div class="insta-badge">1/9</div>
+                </div>
+                <div class="insta-dots"></div>
+              </div>
+            </div>
+
+            <!-- Placeholder Carrusel 02 -->
+            <div class="clip">
+              <div class="num">Carrusel 02</div>
+              <div class="ph">Próximo carrusel de Instagram.</div>
+              <a class="slot" href="#">+ agregar carrusel</a>
+            </div>
+
+            <!-- Placeholder Carrusel 03 -->
+            <div class="clip">
+              <div class="num">Carrusel 03</div>
+              <div class="ph">Próximo carrusel de Instagram.</div>
+              <a class="slot" href="#">+ agregar carrusel</a>
+            </div>
+
+          </div>
+          <div class="clips-extra">
+            <div class="clips" style="padding-top: 16px;">
+              <div class="clip"><div class="num">Carrusel 04</div><div class="ph">Próximo carrusel.</div><a class="slot" href="#">+ agregar carrusel</a></div>
+              <div class="clip"><div class="num">Carrusel 05</div><div class="ph">Próximo carrusel.</div><a class="slot" href="#">+ agregar carrusel</a></div>
+              <div class="clip"><div class="num">Carrusel 06</div><div class="ph">Próximo carrusel.</div><a class="slot" href="#">+ agregar carrusel</a></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
+
+    <!-- CONTROLES DE PAGINACIÓN DE SECCIÓN: PUNTOS AL CENTRO -->
+    <div class="fusion-pagination-controls">
+      <div class="fusion-dots">
+        <span class="dot-indicator active" id="dotPage1" title="Página 1"></span>
+        <span class="dot-indicator" id="dotPage2" title="Página 2"></span>
+      </div>
+    </div>
+
+    <!-- FLECHAS LATERALES SUTILES Y DELGADAS (SVG) -->
+    <button id="fusionPrevBtn" class="side-arrow-btn prev" title="Página anterior" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button id="fusionNextBtn" class="side-arrow-btn next visible" title="Siguiente página" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
   </section>
 
   <section class="page" id="color">
@@ -480,6 +850,13 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
 
 </div>
 
+<!-- Modal Ventana Emergente -->
+<div id="imageModal" class="modal-overlay">
+  <div class="modal-container">
+    <img id="modalImg" class="modal-img" src="" alt="Vista ampliada">
+  </div>
+</div>
+
 <footer id="contacto">
   <div class="wrap">
     <h2>Contacto</h2>
@@ -507,7 +884,7 @@ function setGlow(glowName) {
 
 pages.forEach(page => {
   page.addEventListener('click', (e) => {
-    if (e.target.closest('a, iframe, .clips, .clips-extra, .about-grid, .about-extra')) return;
+    if (e.target.closest('a, iframe, .clips, .clips-extra, .about-grid, .about-extra, .fusion-pagination-controls, .side-arrow-btn, .insta-carousel')) return;
 
     const wasExpanded = page.classList.contains('expanded');
 
@@ -571,6 +948,155 @@ tabs.forEach(tab => {
       setGlow(null);
     }
   });
+});
+
+/* Lógica del Paginado Deslizable y Flechas de la Sección Fusion */
+const fusionTrack = document.getElementById('fusionTrack');
+const fusionPrevBtn = document.getElementById('fusionPrevBtn');
+const fusionNextBtn = document.getElementById('fusionNextBtn');
+const dotPage1 = document.getElementById('dotPage1');
+const dotPage2 = document.getElementById('dotPage2');
+const fusionSlides = document.querySelectorAll('.fusion-slide');
+let currentFusionPage = 1;
+
+function updateFusionPage(page) {
+  currentFusionPage = page;
+  
+  fusionSlides.forEach(s => s.classList.add('is-sliding'));
+
+  if (currentFusionPage === 1) {
+    fusionTrack.style.transform = 'translateX(0%)';
+    dotPage1.classList.add('active');
+    dotPage2.classList.remove('active');
+    
+    fusionPrevBtn.classList.remove('visible');
+    fusionNextBtn.classList.add('visible');
+  } else {
+    fusionTrack.style.transform = 'translateX(-50%)';
+    dotPage1.classList.remove('active');
+    dotPage2.classList.add('active');
+    
+    fusionNextBtn.classList.remove('visible');
+    fusionPrevBtn.classList.add('visible');
+  }
+
+  setTimeout(() => {
+    fusionSlides.forEach((s, idx) => {
+      s.classList.remove('is-sliding');
+      if (idx + 1 === currentFusionPage) {
+        s.classList.add('active-slide');
+      } else {
+        s.classList.remove('active-slide');
+      }
+    });
+  }, 450);
+}
+
+fusionPrevBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (currentFusionPage > 1) updateFusionPage(1);
+});
+
+fusionNextBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (currentFusionPage < 2) updateFusionPage(2);
+});
+
+dotPage1.addEventListener('click', (e) => {
+  e.stopPropagation();
+  updateFusionPage(1);
+});
+
+dotPage2.addEventListener('click', (e) => {
+  e.stopPropagation();
+  updateFusionPage(2);
+});
+
+/* Lógica de los Carruseles Estilo Instagram */
+document.querySelectorAll('.insta-carousel').forEach(carousel => {
+  const track = carousel.querySelector('.insta-track');
+  const slides = carousel.querySelectorAll('.insta-track img');
+  const prevBtn = carousel.querySelector('.insta-arrow.prev');
+  const nextBtn = carousel.querySelector('.insta-arrow.next');
+  const badge = carousel.querySelector('.insta-badge');
+  const dotsContainer = carousel.querySelector('.insta-dots');
+  
+  let currentIndex = 0;
+  const total = slides.length;
+
+  dotsContainer.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('span');
+    dot.className = 'insta-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', (e) => {
+      e.stopPropagation();
+      goToSlide(i);
+    });
+    dotsContainer.appendChild(dot);
+  }
+
+  const dots = dotsContainer.querySelectorAll('.insta-dot');
+
+  function goToSlide(index) {
+    currentIndex = index;
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    if (badge) badge.textContent = `${currentIndex + 1}/${total}`;
+    
+    if (prevBtn) {
+      prevBtn.style.opacity = currentIndex === 0 ? '0' : '1';
+      prevBtn.style.pointerEvents = currentIndex === 0 ? 'none' : 'auto';
+    }
+    if (nextBtn) {
+      nextBtn.style.opacity = currentIndex === total - 1 ? '0' : '1';
+      nextBtn.style.pointerEvents = currentIndex === total - 1 ? 'none' : 'auto';
+    }
+
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle('active', idx === currentIndex);
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentIndex > 0) goToSlide(currentIndex - 1);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentIndex < total - 1) goToSlide(currentIndex + 1);
+    });
+  }
+
+  goToSlide(0);
+});
+
+/* Lógica de la Ventana Emergente (Modal) para Miniaturas */
+const imageModal = document.getElementById('imageModal');
+const modalImg = document.getElementById('modalImg');
+
+document.addEventListener('click', (e) => {
+  const img = e.target.closest('#fusion .clips img');
+  if (img && !e.target.closest('.insta-arrow') && !e.target.closest('.insta-dots')) {
+    e.stopPropagation();
+    modalImg.src = img.src;
+    modalImg.alt = img.alt;
+    imageModal.classList.add('active');
+  }
+});
+
+imageModal.addEventListener('click', (e) => {
+  if (e.target !== modalImg) {
+    imageModal.classList.remove('active');
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && imageModal.classList.contains('active')) {
+    imageModal.classList.remove('active');
+  }
 });
 </script>
 </body>
