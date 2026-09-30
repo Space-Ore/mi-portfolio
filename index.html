@@ -177,6 +177,11 @@ h1 span{position:relative; display:inline-block;}
 
 .clips{display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:16px; position:relative; z-index:2;}
 
+/* Grilla de 2 columnas para el Podcast y YouTube */
+#fairlight .clips, #deliver .clips {
+  grid-template-columns: repeat(2, 1fr);
+}
+
 .clips-extra {
   max-height: 0;
   opacity: 0;
@@ -207,6 +212,58 @@ h1 span{position:relative; display:inline-block;}
 .clip a.slot{margin-top:12px; font-size:13px; color:var(--c); text-decoration:none; border-bottom:1px dotted var(--c); width:fit-content;}
 .clip img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 4px; margin-top: 12px; border: 1px solid var(--line); cursor: pointer; transition: transform 0.2s ease, filter 0.2s ease; }
 .clip img:hover { transform: scale(1.02); filter: brightness(1.1); }
+
+/* Tarjetas con miniatura interactiva de video */
+.video-thumb-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  background: #000;
+}
+.video-thumb-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  margin-top: 0;
+  border: none;
+}
+.video-thumb-card:hover img {
+  transform: scale(1.05);
+  filter: brightness(0.85);
+}
+.video-thumb-card .play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  background: rgba(18, 19, 22, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c, var(--fair));
+  box-shadow: 0 0 15px rgba(0,0,0,0.6);
+  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+.video-thumb-card:hover .play-icon {
+  transform: translate(-50%, -50%) scale(1.12);
+  background: var(--c, var(--fair));
+  color: #0b0c0e;
+}
+.video-thumb-card .play-icon svg {
+  width: 22px;
+  height: 22px;
+  margin-left: 2px;
+}
 
 .video-container {
     position: relative;
@@ -244,7 +301,6 @@ h1 span{position:relative; display:inline-block;}
   transition: opacity 0.3s ease;
 }
 
-/* Colapso de la diapositiva inactiva para evitar espacio muerto */
 .fusion-slide:not(.active-slide):not(.is-sliding) {
   height: 0;
   overflow: hidden;
@@ -258,7 +314,7 @@ h1 span{position:relative; display:inline-block;}
   opacity: 1;
 }
 
-/* Carrusel Estilo Instagram para la Ventana 2 */
+/* Carrusel Estilo Instagram */
 .insta-carousel {
   position: relative;
   width: 100%;
@@ -383,7 +439,7 @@ h1 span{position:relative; display:inline-block;}
   box-shadow: 0 0 8px var(--fusion);
 }
 
-/* Controles de Paginación: Puntos al centro */
+/* Controles de Paginación */
 .fusion-pagination-controls {
   display: none;
   align-items: center;
@@ -419,7 +475,6 @@ h1 span{position:relative; display:inline-block;}
   transform: scale(1.3);
 }
 
-/* Flechas Laterales Vectoriales Ultradelgadas */
 .side-arrow-btn {
   display: none;
   position: absolute;
@@ -470,12 +525,12 @@ h1 span{position:relative; display:inline-block;}
   transform: scale(1.25) !important;
 }
 
-/* Modal Ventana Emergente para Miniaturas */
+/* Modales */
 .modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 999;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.88);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -509,6 +564,47 @@ h1 span{position:relative; display:inline-block;}
   object-fit: contain;
   display: block;
 }
+
+.video-modal-container {
+  width: 100%;
+  max-width: 860px;
+  position: relative;
+  transform: scale(0.92);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-overlay.active .video-modal-container {
+  transform: scale(1);
+}
+.video-modal-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+  border: 1px solid var(--line);
+}
+.video-modal-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.modal-close {
+  position: absolute;
+  top: -38px;
+  right: 0;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s ease, color 0.2s ease;
+  z-index: 10;
+}
+.modal-close:hover { opacity: 1; color: var(--fair); }
 
 .about-grid{display:flex; gap:32px; align-items:center; flex-wrap:wrap; position:relative; z-index:2;}
 .about-text{flex:1; min-width:280px;}
@@ -553,6 +649,7 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
 @media (max-width:560px){
   header.hero{padding:64px 0 72px;}
   .page{padding:36px 20px;}
+  #fairlight .clips, #deliver .clips { grid-template-columns: 1fr; }
   .about-grid{flex-direction: column; text-align: center;}
 }
 </style>
@@ -693,11 +790,10 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
           </div>
         </div>
 
-        <!-- PÁGINA 2 DE CARRUSELES ESTILO INSTAGRAM (3 CARRUSELES) -->
+        <!-- PÁGINA 2 DE CARRUSELES ESTILO INSTAGRAM -->
         <div class="fusion-slide">
           <div class="clips">
             
-            <!-- Carrusel 01 — Don Gato -->
             <div class="clip">
               <div class="num">Carrusel — Don Gato</div>
               <div class="insta-carousel">
@@ -725,7 +821,6 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
               </div>
             </div>
 
-            <!-- Carrusel 02 — Martín Faraón -->
             <div class="clip">
               <div class="num">Carrusel — Martín Faraón</div>
               <div class="insta-carousel">
@@ -752,7 +847,6 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
               </div>
             </div>
 
-            <!-- Carrusel 03 — La Casa del Helado / AFADHYA -->
             <div class="clip">
               <div class="num">Carrusel — La Casa del Helado</div>
               <div class="insta-carousel">
@@ -783,7 +877,7 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
       </div>
     </div>
 
-    <!-- CONTROLES DE PAGINACIÓN DE SECCIÓN: PUNTOS AL CENTRO -->
+    <!-- CONTROLES DE PAGINACIÓN -->
     <div class="fusion-pagination-controls">
       <div class="fusion-dots">
         <span class="dot-indicator active" id="dotPage1" title="Página 1"></span>
@@ -791,7 +885,6 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
       </div>
     </div>
 
-    <!-- FLECHAS LATERALES SUTILES Y DELGADAS (SVG) -->
     <button id="fusionPrevBtn" class="side-arrow-btn prev" title="Página anterior" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
     </button>
@@ -820,42 +913,112 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
     </div>
   </section>
 
+  <!-- SECCIÓN PODCAST -->
   <section class="page" id="fairlight">
     <div class="bottom-hint">ver más ▾</div>
     <div class="page-head">
       <div class="page-title-area"><span class="page-tag">Fairlight</span><h2>Podcast — Separados al Nacer</h2></div>
     </div>
     <p class="desc">Producción y postproducción integral del podcast: edición de audio y video, diseño de las miniaturas del canal, y los reels de cada episodio para redes.</p>
+    
+    <!-- 2 VIDEOS VISIBLES EN POSICIÓN 1 Y 2 -->
     <div class="clips">
-      <div class="clip"><div class="num">Ep. 01</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
-      <div class="clip"><div class="num">Ep. 02</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
-      <div class="clip"><div class="num">Ep. 03</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+      <div class="clip">
+        <div class="num">Episodio 01</div>
+        <div class="video-thumb-card" data-video-id="TWYUUFp-QLs">
+          <img src="https://img.youtube.com/vi/TWYUUFp-QLs/hqdefault.jpg" alt="Separados al Nacer Ep. 01">
+          <div class="play-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="clip">
+        <div class="num">Episodio 02</div>
+        <div class="video-thumb-card" data-video-id="KyZYn2bq4o0">
+          <img src="https://img.youtube.com/vi/KyZYn2bq4o0/hqdefault.jpg" alt="Separados al Nacer Ep. 02">
+          <div class="play-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- VIDEOS 3 Y 4 EN "VER MÁS" -->
     <div class="clips-extra">
       <div class="clips" style="padding-top: 16px;">
-        <div class="clip"><div class="num">Ep. 04</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
-        <div class="clip"><div class="num">Ep. 05</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
-        <div class="clip"><div class="num">Ep. 06</div><div class="ph">Episodio destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+        <div class="clip">
+          <div class="num">Episodio 03</div>
+          <div class="video-thumb-card" data-video-id="ZIQNRAEWBYU">
+            <img src="https://img.youtube.com/vi/ZIQNRAEWBYU/hqdefault.jpg" alt="Separados al Nacer Ep. 03">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="clip">
+          <div class="num">Episodio 04</div>
+          <div class="video-thumb-card" data-video-id="GX-yZPqEHHc">
+            <img src="https://img.youtube.com/vi/GX-yZPqEHHc/hqdefault.jpg" alt="Separados al Nacer Ep. 04">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- SECCIÓN YOUTUBE -->
   <section class="page" id="deliver">
     <div class="bottom-hint">ver más ▾</div>
     <div class="page-head">
       <div class="page-title-area"><span class="page-tag">Deliver</span><h2>YouTube — videos largos</h2></div>
     </div>
     <p class="desc">Edición de formato largo para YouTube: estructura, ritmo narrativo y entrega final lista para publicar.</p>
+    
+    <!-- 2 VIDEOS VISIBLES EN POSICIÓN 1 Y 2 -->
     <div class="clips">
-      <div class="clip"><div class="num">Video 01</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
-      <div class="clip"><div class="num">Video 02</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
-      <div class="clip"><div class="num">Video 03</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+      <div class="clip">
+        <div class="num">Video 01</div>
+        <div class="video-thumb-card" data-video-id="DvsOF9u15e0">
+          <img src="https://img.youtube.com/vi/DvsOF9u15e0/hqdefault.jpg" alt="YouTube Video 01">
+          <div class="play-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="clip">
+        <div class="num">Video 02</div>
+        <div class="video-thumb-card" data-video-id="_U5Xg4HgbSY">
+          <img src="https://img.youtube.com/vi/_U5Xg4HgbSY/hqdefault.jpg" alt="YouTube Video 02">
+          <div class="play-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- VIDEOS 3 Y 4 EN "VER MÁS" -->
     <div class="clips-extra">
       <div class="clips" style="padding-top: 16px;">
-        <div class="clip"><div class="num">Video 04</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
-        <div class="clip"><div class="num">Video 05</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
-        <div class="clip"><div class="num">Video 06</div><div class="ph">Video largo destacado.</div><a class="slot" href="#">+ agregar link</a></div>
+        <div class="clip">
+          <div class="num">Video 03</div>
+          <div class="video-thumb-card" data-video-id="jS4IiDwfHmI">
+            <img src="https://img.youtube.com/vi/jS4IiDwfHmI/hqdefault.jpg" alt="YouTube Video 03">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="clip">
+          <div class="num">Video 04</div>
+          <div class="video-thumb-card" data-video-id="YNgUediTHH4">
+            <img src="https://img.youtube.com/vi/YNgUediTHH4/hqdefault.jpg" alt="YouTube Video 04">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -881,10 +1044,20 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
 
 </div>
 
-<!-- Modal Ventana Emergente -->
+<!-- Modal Emergente para Imagenes -->
 <div id="imageModal" class="modal-overlay">
   <div class="modal-container">
     <img id="modalImg" class="modal-img" src="" alt="Vista ampliada">
+  </div>
+</div>
+
+<!-- Modal Emergente para Videos de YouTube -->
+<div id="videoModal" class="modal-overlay">
+  <div class="video-modal-container">
+    <button class="modal-close" id="closeVideoModal" type="button" aria-label="Cerrar">&times;</button>
+    <div class="video-modal-wrapper">
+      <iframe id="modalVideoFrame" src="" title="Reproductor de YouTube" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
   </div>
 </div>
 
@@ -915,7 +1088,7 @@ function setGlow(glowName) {
 
 pages.forEach(page => {
   page.addEventListener('click', (e) => {
-    if (e.target.closest('a, iframe, .clips, .clips-extra, .about-grid, .about-extra, .fusion-pagination-controls, .side-arrow-btn, .insta-carousel')) return;
+    if (e.target.closest('a, iframe, .clips, .clips-extra, .about-grid, .about-extra, .fusion-pagination-controls, .side-arrow-btn, .insta-carousel, .video-thumb-card')) return;
 
     const wasExpanded = page.classList.contains('expanded');
 
@@ -981,7 +1154,7 @@ tabs.forEach(tab => {
   });
 });
 
-/* Lógica del Paginado Deslizable y Flechas de la Sección Fusion */
+/* Paginado de Fusion */
 const fusionTrack = document.getElementById('fusionTrack');
 const fusionPrevBtn = document.getElementById('fusionPrevBtn');
 const fusionNextBtn = document.getElementById('fusionNextBtn');
@@ -1043,7 +1216,7 @@ dotPage2.addEventListener('click', (e) => {
   updateFusionPage(2);
 });
 
-/* Lógica de los Carruseles Estilo Instagram */
+/* Carruseles Instagram */
 document.querySelectorAll('.insta-carousel').forEach(carousel => {
   const track = carousel.querySelector('.insta-track');
   const slides = carousel.querySelectorAll('.insta-track img');
@@ -1104,7 +1277,7 @@ document.querySelectorAll('.insta-carousel').forEach(carousel => {
   goToSlide(0);
 });
 
-/* Lógica de la Ventana Emergente (Modal) para Miniaturas */
+/* Modal Imagenes */
 const imageModal = document.getElementById('imageModal');
 const modalImg = document.getElementById('modalImg');
 
@@ -1124,9 +1297,42 @@ imageModal.addEventListener('click', (e) => {
   }
 });
 
+/* Modal Videos de YouTube */
+const videoModal = document.getElementById('videoModal');
+const modalVideoFrame = document.getElementById('modalVideoFrame');
+const closeVideoModal = document.getElementById('closeVideoModal');
+
+document.addEventListener('click', (e) => {
+  const videoCard = e.target.closest('.video-thumb-card');
+  if (videoCard) {
+    e.stopPropagation();
+    const videoId = videoCard.dataset.videoId;
+    if (videoId) {
+      modalVideoFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+      videoModal.classList.add('active');
+    }
+  }
+});
+
+function closeVideoPlayer() {
+  videoModal.classList.remove('active');
+  modalVideoFrame.src = '';
+}
+
+if (closeVideoModal) {
+  closeVideoModal.addEventListener('click', closeVideoPlayer);
+}
+
+videoModal.addEventListener('click', (e) => {
+  if (e.target === videoModal) {
+    closeVideoPlayer();
+  }
+});
+
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && imageModal.classList.contains('active')) {
-    imageModal.classList.remove('active');
+  if (e.key === 'Escape') {
+    if (videoModal.classList.contains('active')) closeVideoPlayer();
+    if (imageModal.classList.contains('active')) imageModal.classList.remove('active');
   }
 });
 </script>
