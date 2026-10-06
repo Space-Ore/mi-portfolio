@@ -11,7 +11,7 @@
 :root{
   --bg:#121316; --panel:#1b1d21; --panel2:#202226; --line:#2c2f34;
   --text:#EDEEF0; --muted:#9297a1;
-  --edit:#FF7A1A; --color:#FF3F8E; --color2:#21E6C1; --fair:#3ECF8E; --deliver:#2FA8FF; --fusion:#FFC93C; --about:#ffffff;
+  --edit:#FF7A1A; --color:#FF3F8E; --color2:#21E6C1; --fair:#3ECF8E; --deliver:#2FA8FF; --fusion:#FFC93C; --about:#9266FF; --glitch-c:#00F0FF; --glitch-m:#FF2BD6;
   --sans:'Inter',system-ui,-apple-system,sans-serif;
   --display:'Space Grotesk',var(--sans);
   --name:'Bebas Neue',var(--display);
@@ -33,7 +33,9 @@ body{margin:0; background:var(--bg); color:var(--text); font-family:var(--sans);
 .glow.g-color{background:radial-gradient(circle at 50% 15%, var(--color), transparent 60%);}
 .glow.g-fair{background:radial-gradient(circle at 50% 15%, var(--fair), transparent 60%);}
 .glow.g-deliver{background:radial-gradient(circle at 50% 15%, var(--deliver), transparent 60%);}
-.glow.g-about{background:radial-gradient(circle at 50% 15%, rgba(255,255,255,0.7), transparent 60%);}
+.glow.g-about::before{content:''; position:absolute; inset:0;
+  background:radial-gradient(circle at 50% 15%, var(--about), transparent 60%), radial-gradient(circle at 42% 18%, rgba(0,240,255,.75), transparent 45%), radial-gradient(circle at 58% 18%, rgba(255,43,214,.75), transparent 45%);
+}
 a{color:inherit;}
 .wrap{max-width:900px; margin:0 auto; padding:0 24px;}
 
@@ -44,7 +46,7 @@ nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:50; background:rg
 .brand{font-family:var(--mono); font-size:13px; color:var(--muted); margin-right:auto; white-space:nowrap;}
 .tab{font-family:var(--display); font-weight:600; font-size:14px; padding:6px 12px; border-radius:6px; text-decoration:none; color:var(--muted); white-space:nowrap; border-bottom:2px solid transparent;}
 .tab:hover{color:var(--text);}
-.tab.edit{--c:var(--edit);} .tab.fusion{--c:var(--fusion);} .tab.color{--c:var(--color);} .tab.fair{--c:var(--fair);} .tab.deliver{--c:var(--deliver);}
+.tab.about{--c:var(--about);} .tab.edit{--c:var(--edit);} .tab.fusion{--c:var(--fusion);} .tab.color{--c:var(--color);} .tab.fair{--c:var(--fair);} .tab.deliver{--c:var(--deliver);}
 .tab.on{color:var(--text); border-color:var(--c);}
 
 /* Hero */
@@ -77,6 +79,7 @@ h1 span{position:relative; display:inline-block;}
 .clipbtn::before{content:''; position:absolute; top:0; left:0; right:0; height:3px; background:rgba(255,255,255,.45); z-index:2;}
 .clipbtn:hover{transform:translateY(-4px) scale(1.04); box-shadow:0 16px 30px -10px rgba(0,0,0,.8), 0 0 22px -2px var(--c);}
 .clipbtn.c-fusion{--c:var(--fusion);} .clipbtn.c-color{--c:var(--color);} .clipbtn.c-fair{--c:var(--fair);} .clipbtn.c-deliver{--c:var(--deliver);}
+.clipbtn.c-about{--c:var(--about);}
 .clipbtn.c-contact{--c:var(--panel2); color:var(--text); border:1px solid var(--line);}
 .clipbtn.c-contact::before{background:var(--line);}
 
@@ -637,6 +640,155 @@ h1 span{position:relative; display:inline-block;}
 #sobremi.expanded .about-extra::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
 #sobremi.expanded .about-extra::-webkit-scrollbar-thumb { background: var(--c); box-shadow: 0 0 10px var(--c); }
 
+/* ===== Estética GLITCH — "Quién soy" ===== */
+
+/* Botón central: ráfaga cada 2 s, más intensa con el mouse encima */
+.clipbtn.c-about{animation:btnGlitch 2s steps(1) infinite;}
+.clipbtn.c-about span{display:inline-block;}
+.clipbtn.c-about span::before, .clipbtn.c-about span::after{
+  content:attr(data-text); position:absolute; inset:0; padding:inherit; z-index:-1; pointer-events:none; opacity:0;}
+.clipbtn.c-about span::before{color:var(--glitch-c); animation:sliceA 2s steps(1) infinite;}
+.clipbtn.c-about span::after{color:var(--glitch-m); animation:sliceB 2s steps(1) infinite;}
+.clipbtn.c-about:hover{animation:btnGlitchHover .5s steps(1) infinite;}
+.clipbtn.c-about:hover span::before{animation:sliceA .5s steps(1) infinite;}
+.clipbtn.c-about:hover span::after{animation:sliceB .5s steps(1) infinite;}
+
+@keyframes btnGlitch{
+  0%,22%,100%{transform:none; box-shadow:0 10px 20px -10px rgba(0,0,0,.7);}
+  3%{transform:translate(-2px,1px) skewX(-6deg); box-shadow:-4px 0 0 var(--glitch-c), 4px 0 0 var(--glitch-m);}
+  6%{transform:translate(3px,-1px) skewX(5deg); box-shadow:4px 0 0 var(--glitch-c), -4px 0 0 var(--glitch-m);}
+  9%{transform:translate(-1px,0); box-shadow:0 10px 20px -10px rgba(0,0,0,.7);}
+  12%{transform:translate(2px,1px) skewX(-3deg); box-shadow:-3px 0 0 var(--glitch-c), 3px 0 0 var(--glitch-m);}
+  16%{transform:translate(-2px,-1px); box-shadow:3px 0 0 var(--glitch-c), -3px 0 0 var(--glitch-m);}
+  19%{transform:none; box-shadow:0 10px 20px -10px rgba(0,0,0,.7);}
+}
+@keyframes btnGlitchHover{
+  0%,100%{transform:translateY(-4px) scale(1.04); box-shadow:0 16px 30px -10px rgba(0,0,0,.8), 0 0 22px -2px var(--c);}
+  20%{transform:translate(-3px,-5px) scale(1.05) skewX(-8deg); box-shadow:-5px 0 0 var(--glitch-c), 5px 0 0 var(--glitch-m), 0 0 22px -2px var(--c);}
+  45%{transform:translate(4px,-3px) scale(1.04) skewX(6deg); box-shadow:5px 0 0 var(--glitch-c), -5px 0 0 var(--glitch-m), 0 0 22px -2px var(--c);}
+  70%{transform:translate(-2px,-4px) scale(1.05) skewX(-4deg); box-shadow:-4px 0 0 var(--glitch-c), 4px 0 0 var(--glitch-m), 0 0 22px -2px var(--c);}
+}
+@keyframes sliceA{
+  0%,24%,100%{opacity:0; clip-path:inset(0 0 100% 0); transform:translateX(0);}
+  2%{opacity:1; clip-path:inset(10% 0 60% 0); transform:translateX(-4px);}
+  6%{clip-path:inset(50% 0 20% 0); transform:translateX(4px);}
+  10%{clip-path:inset(0 0 70% 0); transform:translateX(-3px);}
+  14%{clip-path:inset(70% 0 5% 0); transform:translateX(3px);}
+  18%{clip-path:inset(30% 0 40% 0); transform:translateX(-2px);}
+  22%{clip-path:inset(0 0 0 0); transform:translateX(-2px);}
+}
+@keyframes sliceB{
+  0%,24%,100%{opacity:0; clip-path:inset(0 0 100% 0); transform:translateX(0);}
+  3%{opacity:1; clip-path:inset(60% 0 10% 0); transform:translateX(4px);}
+  7%{clip-path:inset(15% 0 55% 0); transform:translateX(-4px);}
+  11%{clip-path:inset(75% 0 0 0); transform:translateX(3px);}
+  15%{clip-path:inset(35% 0 35% 0); transform:translateX(-3px);}
+  19%{clip-path:inset(5% 0 80% 0); transform:translateX(2px);}
+  23%{clip-path:inset(0 0 0 0); transform:translateX(2px);}
+}
+
+/* Pestaña superior: misma ráfaga cada 2 s, sincronizada con el botón */
+.tab.about{animation:tabGlitch 2s steps(1) infinite;}
+.tab.about:hover{animation:tabGlitchHover .5s steps(1) infinite;}
+@keyframes tabGlitch{
+  0%,22%,100%{text-shadow:none; transform:none;}
+  3%{color:var(--text); text-shadow:-2px 0 var(--glitch-c), 2px 0 var(--glitch-m); transform:translateX(-1px);}
+  6%{color:var(--text); text-shadow:2px 0 var(--glitch-c), -2px 0 var(--glitch-m); transform:translateX(1px);}
+  9%{text-shadow:none; transform:none;}
+  12%{color:var(--text); text-shadow:-2px 0 var(--glitch-c), 2px 0 var(--glitch-m); transform:translateX(1px);}
+  16%{text-shadow:none; transform:none;}
+}
+@keyframes tabGlitchHover{
+  0%,100%{color:var(--text); text-shadow:-2px 0 var(--glitch-c), 2px 0 var(--glitch-m);}
+  35%{color:var(--text); text-shadow:3px 0 var(--glitch-c), -3px 0 var(--glitch-m); transform:translateX(-1px);}
+  70%{color:var(--text); text-shadow:-1px 0 var(--glitch-c), 1px 0 var(--glitch-m); transform:translateX(1px);}
+}
+
+/* Bandeja "Quién soy" */
+#sobremi::before{box-shadow:-4px 0 0 var(--glitch-c), 4px 0 0 var(--glitch-m);}
+#sobremi::after{box-shadow:-4px 0 0 var(--glitch-c), 4px 0 0 var(--glitch-m), 0 -3px 12px var(--c);}
+#sobremi.expanded{
+  background:repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px), linear-gradient(180deg, color-mix(in srgb, var(--c) 14%, var(--panel)), var(--panel) 380px);
+  box-shadow:0 20px 45px -15px rgba(0,0,0,.8), -8px 0 26px -10px var(--glitch-c), 8px 0 26px -10px var(--glitch-m);
+}
+#sobremi.expanded::before{animation:splitTop 2.4s steps(1) infinite;}
+#sobremi.expanded::after{animation:splitBottom 2.4s steps(1) infinite;}
+@keyframes splitTop{
+  0%,100%{box-shadow:-4px 0 0 var(--glitch-c), 4px 0 0 var(--glitch-m);}
+  8%{box-shadow:-9px 0 0 var(--glitch-c), 9px 0 0 var(--glitch-m);}
+  10%{box-shadow:6px 0 0 var(--glitch-c), -6px 0 0 var(--glitch-m);}
+  12%{box-shadow:-4px 0 0 var(--glitch-c), 4px 0 0 var(--glitch-m);}
+  63%{box-shadow:-8px 0 0 var(--glitch-c), 8px 0 0 var(--glitch-m);}
+  65%{box-shadow:-4px 0 0 var(--glitch-c), 4px 0 0 var(--glitch-m);}
+}
+@keyframes splitBottom{
+  0%,100%{box-shadow:-4px 0 0 var(--glitch-c), 4px 0 0 var(--glitch-m), 0 -3px 12px var(--c);}
+  8%{box-shadow:-9px 0 0 var(--glitch-c), 9px 0 0 var(--glitch-m), 0 -3px 12px var(--c);}
+  10%{box-shadow:6px 0 0 var(--glitch-c), -6px 0 0 var(--glitch-m), 0 -3px 12px var(--c);}
+  12%{box-shadow:-4px 0 0 var(--glitch-c), 4px 0 0 var(--glitch-m), 0 -3px 12px var(--c);}
+  63%{box-shadow:-8px 0 0 var(--glitch-c), 8px 0 0 var(--glitch-m), 0 -3px 12px var(--c);}
+  65%{box-shadow:-4px 0 0 var(--glitch-c), 4px 0 0 var(--glitch-m), 0 -3px 12px var(--c);}
+}
+
+/* Título con glitch de entrada (se dispara al expandir la bandeja) */
+.glitch-title{position:relative; display:inline-block;}
+.glitch-title::before, .glitch-title::after{
+  content:attr(data-text); position:absolute; left:0; top:0; pointer-events:none; opacity:0;}
+.glitch-title::before{color:var(--glitch-c);}
+.glitch-title::after{color:var(--glitch-m);}
+#sobremi.expanded .glitch-title::before{animation:titleA .8s steps(1) 1;}
+#sobremi.expanded .glitch-title::after{animation:titleB .8s steps(1) 1;}
+@keyframes titleA{
+  0%{opacity:1; clip-path:inset(0 0 60% 0); transform:translateX(-6px);}
+  12%{clip-path:inset(40% 0 20% 0); transform:translateX(5px);}
+  25%{clip-path:inset(10% 0 70% 0); transform:translateX(-4px);}
+  40%{clip-path:inset(65% 0 0 0); transform:translateX(4px);}
+  55%{clip-path:inset(25% 0 45% 0); transform:translateX(-2px);}
+  70%{clip-path:inset(0 0 0 0); transform:translateX(-2px);}
+  85%,100%{opacity:0;}
+}
+@keyframes titleB{
+  0%{opacity:1; clip-path:inset(50% 0 10% 0); transform:translateX(6px);}
+  12%{clip-path:inset(0 0 75% 0); transform:translateX(-5px);}
+  25%{clip-path:inset(60% 0 5% 0); transform:translateX(4px);}
+  40%{clip-path:inset(15% 0 55% 0); transform:translateX(-4px);}
+  55%{clip-path:inset(80% 0 0 0); transform:translateX(2px);}
+  70%{clip-path:inset(0 0 0 0); transform:translateX(2px);}
+  85%,100%{opacity:0;}
+}
+
+/* Accesibilidad: sin movimiento si el dispositivo lo pide */
+@media (prefers-reduced-motion: reduce){
+  .clipbtn.c-about, .clipbtn.c-about:hover, .tab.about, .tab.about:hover,
+  .clipbtn.c-about span::before, .clipbtn.c-about span::after,
+  #sobremi.expanded::before, #sobremi.expanded::after,
+  #sobremi.expanded .glitch-title::before, #sobremi.expanded .glitch-title::after{animation:none !important;}
+}
+
+/* ===== Botón flotante de contacto (REC) ===== */
+.fab{position:fixed; right:calc(20px + env(safe-area-inset-right,0px)); bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:60; display:flex; flex-direction:column; align-items:flex-end; gap:14px; transition:opacity .3s ease, transform .3s ease;}
+.fab.hide{opacity:0; transform:translateY(20px); pointer-events:none;}
+.fab-menu{display:flex; flex-direction:column; gap:10px; align-items:flex-end;}
+.fab-clip{--c:var(--fair); font-family:var(--display); font-weight:600; font-size:14px; color:#0b0c0e; background:var(--c); text-decoration:none; border-radius:5px; position:relative; overflow:hidden; padding:12px 20px; min-width:130px; text-align:center;
+  box-shadow:0 10px 20px -10px rgba(0,0,0,.7); opacity:0; transform:translateY(16px) scale(.92); pointer-events:none; transition:opacity .22s ease, transform .22s ease, box-shadow .18s ease;}
+.fab-clip::before{content:''; position:absolute; top:0; left:0; right:0; height:3px; background:rgba(255,255,255,.45);}
+.fab-clip.wa{--c:var(--fair);} .fab-clip.mail{--c:var(--edit);} .fab-clip.in{--c:var(--deliver);}
+.fab-clip:hover{box-shadow:0 14px 26px -10px rgba(0,0,0,.8), 0 0 20px -2px var(--c); transform:translateY(-3px) scale(1.04);}
+.fab.open .fab-clip{opacity:1; transform:none; pointer-events:auto;}
+.fab.open .fab-clip.in{transition-delay:.02s;} .fab.open .fab-clip.mail{transition-delay:.07s;} .fab.open .fab-clip.wa{transition-delay:.12s;}
+.fab.open .fab-clip:hover{transform:translateY(-3px) scale(1.04);}
+.fab-btn{position:relative; display:inline-flex; align-items:center; gap:0; height:58px; min-width:58px; padding:0 19px; border:0; border-radius:29px; background:#ff2d2d; color:#fff; font-family:var(--display); font-weight:700; font-size:15px; cursor:pointer; overflow:visible;
+  box-shadow:0 12px 26px -8px rgba(255,45,45,.6), 0 0 0 1px rgba(255,255,255,.12) inset; transition:gap .25s ease, padding .25s ease, transform .2s ease;}
+.fab-btn::after{content:''; position:absolute; inset:0; border-radius:inherit; border:2px solid #ff2d2d; animation:fabRing 2.2s ease-out infinite; pointer-events:none;}
+.fab-dot{width:20px; height:20px; border-radius:50%; background:#fff; flex-shrink:0; animation:blink 1.6s ease-in-out infinite;}
+.fab-label{max-width:0; overflow:hidden; white-space:nowrap; opacity:0; transition:max-width .3s ease, opacity .2s ease;}
+.fab-btn:hover, .fab.open .fab-btn{gap:10px; padding:0 22px 0 19px;}
+.fab-btn:hover .fab-label, .fab.open .fab-label{max-width:110px; opacity:1;}
+.fab-btn:hover{transform:scale(1.04);}
+.fab-btn:focus-visible{outline:2px solid #fff; outline-offset:3px;}
+@keyframes fabRing{0%{transform:scale(1); opacity:.7;} 100%{transform:scale(1.5); opacity:0;}}
+@media (prefers-reduced-motion: reduce){ .fab-btn::after, .fab-dot{animation:none !important;} }
+
 footer{padding:56px 0 calc(56px + env(safe-area-inset-bottom,0px));}
 footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
 .contact-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px;}
@@ -673,6 +825,7 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
     <a class="tab color" href="#color" data-glow="color" data-section="color">Color</a>
     <a class="tab fair" href="#fairlight" data-glow="fair" data-section="fairlight">Podcast</a>
     <a class="tab deliver" href="#deliver" data-glow="deliver" data-section="deliver">YouTube</a>
+    <a class="tab about" href="#sobremi" data-glow="about" data-section="sobremi">Quién soy</a>
     <a class="tab" href="#contacto">Contacto</a>
   </div>
 </nav>
@@ -704,6 +857,7 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
           <a class="clipbtn c-color" href="#color" data-glow="color" data-section="color"><span>Color</span></a>
           <a class="clipbtn c-fair" href="#fairlight" data-glow="fair" data-section="fairlight"><span>Podcast</span></a>
           <a class="clipbtn c-deliver" href="#deliver" data-glow="deliver" data-section="deliver"><span>YouTube</span></a>
+          <a class="clipbtn c-about" href="#sobremi" data-glow="about" data-section="sobremi"><span data-text="Quién soy">Quién soy</span></a>
           <a class="clipbtn c-contact" href="#contacto"><span>Contacto</span></a>
         </div>
       </div>
@@ -711,6 +865,24 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
   </header>
 
   <div id="sectionsWrap">
+  <section class="page" id="sobremi">
+    <div class="bottom-hint">ver más ▾</div>
+    <div class="page-head">
+      <div class="page-title-area"><h2 class="glitch-title" data-text="Quién soy">Quién soy</h2></div>
+    </div>
+    <div class="about-grid" style="margin-top:16px;">
+      <div class="about-text">
+        <p>Soy videógrafo y editor de video con <strong>3 años de experiencia</strong>. No solo me encargo de la postproducción, sino también de la grabación de contenido con calidad profesional.</p>
+      </div>
+    </div>
+    <div class="about-extra">
+      <p style="color: var(--muted); margin: 0; font-size: 15px; line-height: 1.6;">
+        A lo largo de mi recorrido he trabajado en podcasts —incluyendo mi propio proyecto—, videos de formato largo para YouTube, entrevistas y vlogs, además de colaborar en el rubro gastronómico para marcas como Ribs al Río y Martín Faraón.<br><br>
+        Me apasiona lo que hago, cuido cada detalle al máximo y me enfoco en entender la visión y necesidad de mis clientes para plasmarla con precisión en cada proyecto.
+      </p>
+    </div>
+  </section>
+
   <section class="page" id="edit">
     <div class="bottom-hint">ver más ▾</div>
     <div class="page-head">
@@ -1023,23 +1195,6 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
     </div>
   </section>
 
-  <section class="page" id="sobremi">
-    <div class="bottom-hint">ver más ▾</div>
-    <div class="page-head">
-      <div class="page-title-area"><h2>Sobre mí</h2></div>
-    </div>
-    <div class="about-grid" style="margin-top:16px;">
-      <div class="about-text">
-        <p>Soy videógrafo y editor de video con <strong>3 años de experiencia</strong>. No solo me encargo de la postproducción, sino también de la grabación de contenido con calidad profesional.</p>
-      </div>
-    </div>
-    <div class="about-extra">
-      <p style="color: var(--muted); margin: 0; font-size: 15px; line-height: 1.6;">
-        A lo largo de mi recorrido he trabajado en podcasts —incluyendo mi propio proyecto—, videos de formato largo para YouTube, entrevistas y vlogs, además de colaborar en el rubro gastronómico para marcas como Ribs al Río y Martín Faraón.<br><br>
-        Me apasiona lo que hago, cuido cada detalle al máximo y me enfoco en entender la visión y necesidad de mis clientes para plasmarla con precisión en cada proyecto.
-      </p>
-    </div>
-  </section>
   </div>
 
 </div>
@@ -1059,6 +1214,18 @@ footer h2{font-family:var(--display); font-size:26px; margin:0 0 20px;}
       <iframe id="modalVideoFrame" src="" title="Reproductor de YouTube" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
   </div>
+</div>
+
+<!-- Botón flotante de contacto -->
+<div class="fab" id="fab">
+  <div class="fab-menu" id="fabMenu">
+    <a class="fab-clip in" href="https://www.linkedin.com/in/jorge-sanchez-videoeditor/" target="_blank" rel="noopener">LinkedIn</a>
+    <a class="fab-clip mail" href="mailto:jorgedavidchez@gmail.com">Email</a>
+    <a class="fab-clip wa" href="https://wa.me/541136418918?text=Hola%20Jorge%2C%20vi%20tu%20portfolio%20y%20me%20gustar%C3%ADa%20hablar%20de%20un%20proyecto." target="_blank" rel="noopener">WhatsApp</a>
+  </div>
+  <button class="fab-btn" id="fabBtn" type="button" aria-expanded="false" aria-controls="fabMenu" aria-label="Contacto">
+    <span class="fab-dot"></span><span class="fab-label">Hablemos</span>
+  </button>
 </div>
 
 <footer id="contacto">
@@ -1120,6 +1287,10 @@ document.querySelectorAll('[data-section]').forEach(btn => {
       pages.forEach(p => p.classList.remove('expanded'));
       targetPage.classList.add('expanded');
       sectionsWrap.prepend(targetPage);
+      // Quién soy (#sobremi) solo puede ir primero (si se lo pide) o al final (si se pide otra sección)
+      if (targetId !== 'sobremi') {
+        sectionsWrap.appendChild(document.getElementById('sobremi'));
+      }
       
       if (targetId === 'sobremi') {
         setGlow('about');
@@ -1335,6 +1506,22 @@ document.addEventListener('keydown', (e) => {
     if (imageModal.classList.contains('active')) imageModal.classList.remove('active');
   }
 });
+/* Botón flotante de contacto */
+(function(){
+  const fab = document.getElementById('fab');
+  const fabBtn = document.getElementById('fabBtn');
+  if (!fab || !fabBtn) return;
+  const setOpen = (open) => { fab.classList.toggle('open', open); fabBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); };
+  fabBtn.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!fab.classList.contains('open')); });
+  document.addEventListener('click', (e) => { if (!fab.contains(e.target)) setOpen(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+  const footer = document.getElementById('contacto');
+  if (footer && 'IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      entries.forEach(en => { fab.classList.toggle('hide', en.isIntersecting); if (en.isIntersecting) setOpen(false); });
+    }, { threshold: 0.35 }).observe(footer);
+  }
+})();
 </script>
 </body>
 </html>
